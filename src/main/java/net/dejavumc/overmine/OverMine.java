@@ -52,8 +52,10 @@ public final class OverMine extends JavaPlugin implements Listener {
 
         Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
         Location newLoc = hero.move(delta);
+        if (newLoc != null) {
+            event.setTo(newLoc);
+        }
 
-        event.setTo(newLoc);
 
         //ability 2
         if (event.getPlayer().isSneaking() == true) {
@@ -78,12 +80,15 @@ public final class OverMine extends JavaPlugin implements Listener {
     //weapon scrolling
     @EventHandler
     public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
-        if (event.getNewSlot()==0) {
-            Bukkit.broadcastMessage("Ability 1");
-            return;
-        }
-        if (event.getNewSlot()==1) {
-            Bukkit.broadcastMessage("Reload");
+        if (event.getNewSlot()==0 || event.getNewSlot()==1) {
+            if (event.getNewSlot()==0) {
+                Bukkit.broadcastMessage("Ability 1");
+            } else {
+                Bukkit.broadcastMessage("Reload");
+                Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
+                hero.ability1();
+            }
+            event.getPlayer().getInventory().setHeldItemSlot(5);
             return;
         }
         if (event.getNewSlot()<5){

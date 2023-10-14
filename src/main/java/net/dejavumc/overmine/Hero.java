@@ -29,10 +29,12 @@ abstract public class Hero {
     public Location updateCameraPos() {
         Location loc = mesh.getHeadPos();
         if (perspective == Perspective.THIRD) {
+            double THIRD_PERSON_DISTANCE = 5;
             double yawRadians = toRadians(loc.getYaw());
-            double zOffset = Math.sin(yawRadians);
-            double xOffset = Math.cos(yawRadians);
+            double xOffset = Math.sin(yawRadians) * -THIRD_PERSON_DISTANCE;
+            double zOffset = Math.cos(yawRadians) * THIRD_PERSON_DISTANCE;
             loc = loc.subtract(new Vector(xOffset, 0, zOffset));
+            loc.setPitch(0);
         }
         return loc;
     }
@@ -50,14 +52,19 @@ abstract public class Hero {
         updateCameraPos();
     }
 
-    public Location move(Location delta) {
-        double farthest = Math.max(Math.abs(delta.getX()), Math.abs(delta.getZ()));
+    public Perspective getPerspective() {
+        return perspective;
+    }
 
-        if (farthest != 0) {
-            delta.setX((delta.getX() / farthest) * SPEED);
-            delta.setZ((delta.getZ() / farthest) * SPEED);
+    public Location move(Location delta) {
+        if (getPerspective() != Perspective.FIRST) {
+            double farthest = Math.max(Math.abs(delta.getX()), Math.abs(delta.getZ()));
+            if (farthest != 0) {
+                delta.setX((delta.getX() / farthest) * SPEED);
+                delta.setZ((delta.getZ() / farthest) * SPEED);
+            }
+            delta.setY(0);
         }
-        delta.setY(0);
 
         location = location.add(delta);
         location.setYaw(location.getYaw() + delta.getYaw());
@@ -65,9 +72,12 @@ abstract public class Hero {
 
         mesh.moveToLocation(location);
 
-        Location finalLoc = updateCameraPos();
+        if (getPerspective() != Perspective.FIRST) {
+            return updateCameraPos();
+        } else {
+            return null;
+        }
 
-        return finalLoc;
     }
 
     public void setSpeed(double speed) {
@@ -76,7 +86,11 @@ abstract public class Hero {
 
     // ABILITIES
     public void ability1() {
-
+        if (getPerspective() == Perspective.FIRST) {
+            setPerspective(Perspective.THIRD);
+        } else {
+            setPerspective(Perspective.FIRST);
+        }
     }
 
     public void ability2(boolean isEnabling) {
