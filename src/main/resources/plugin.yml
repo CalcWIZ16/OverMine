@@ -1,0 +1,4 @@
+name: OverMine
+version: '${project.version}'
+main: net.dejavumc.overmine.OverMine
+api-version: '1.20'
