@@ -3,6 +3,7 @@ package net.dejavumc.overmine;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.Bukkit;
+import org.bukkit.util.Vector;
 
 abstract public class Hero {
     public Player camera;
@@ -12,22 +13,32 @@ abstract public class Hero {
 
     public Perspective perspective;
 
+    private double SPEED;
+
     public Hero(Player p) {
         this.camera = p;
-
-        p.setAllowFlight(true);
-        p.setFlying(true);
 
         perspective = Perspective.FIRST;
         location = p.getLocation().clone();
         mesh = new Mesh(location.clone());
+
+        SPEED = 0.2f;
     }
 
+    // CAMERA/MOVEMENT
     public Location updateCameraPos() {
-        if (perspective == Perspective.FIRST) {
-            return mesh.getHeadPos();
+        Location loc = mesh.getHeadPos();
+        if (perspective == Perspective.THIRD) {
+            double yawRadians = toRadians(loc.getYaw());
+            double zOffset = Math.sin(yawRadians);
+            double xOffset = Math.cos(yawRadians);
+            loc = loc.subtract(new Vector(xOffset, 0, zOffset));
         }
-        return null;
+        return loc;
+    }
+
+    public double toRadians(double degrees) {
+        return degrees * (Math.PI / 180);
     }
 
     public void setPerspective(Perspective perspective) {
@@ -41,9 +52,6 @@ abstract public class Hero {
 
     public Location move(Location delta) {
         double farthest = Math.max(Math.abs(delta.getX()), Math.abs(delta.getZ()));
-        double SPEED = 0.1;
-
-        Bukkit.broadcastMessage("DELTA YAW: " + delta.getYaw());
 
         if (farthest != 0) {
             delta.setX((delta.getX() / farthest) * SPEED);
@@ -52,16 +60,27 @@ abstract public class Hero {
         delta.setY(0);
 
         location = location.add(delta);
-
-        Bukkit.broadcastMessage("LOC YAW: " + location.getYaw());
+        location.setYaw(location.getYaw() + delta.getYaw());
+        location.setPitch(location.getPitch() + delta.getPitch());
 
         mesh.moveToLocation(location);
 
-        return location;
+        Location finalLoc = updateCameraPos();
 
-//        Location finalLoc = updateCameraPos();;
-//        Bukkit.broadcastMessage("FINAL YAW: " + finalLoc.getYaw());
-//        return finalLoc;
+        return finalLoc;
+    }
+
+    public void setSpeed(double speed) {
+        this.SPEED = speed;
+    }
+
+    // ABILITIES
+    public void ability1() {
+
+    }
+
+    public void ability2(boolean isEnabling) {
+        return;
     }
 }
 

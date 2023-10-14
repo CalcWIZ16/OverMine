@@ -4,6 +4,7 @@ import net.dejavumc.overmine.heros.Soldier76;
 import org.bukkit.Location;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -38,7 +39,17 @@ public final class OverMine extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        Player p = event.getPlayer();
+
+        p.setAllowFlight(true);
+        p.setFlying(true);
+        p.setSprinting(false);
+
         Location delta = event.getTo().subtract(event.getFrom());
+
+        delta.setYaw(event.getTo().getYaw() - event.getFrom().getYaw());
+        delta.setPitch(event.getTo().getPitch() - event.getFrom().getPitch());
+
         Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
         Location newLoc = hero.move(delta);
 
@@ -64,21 +75,30 @@ public final class OverMine extends JavaPlugin implements Listener {
         Bukkit.broadcastMessage("THE UNIVERSE IS SINGING TO ME");
     }
 
-    //ability 1
-    @EventHandler
-    public void onInventoryOpenEvent(InventoryOpenEvent event) {
-        event.setCancelled(true);
-        Bukkit.broadcastMessage("Ability 1");
-    }
-
+    //weapon scrolling
     @EventHandler
     public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
+        if (event.getNewSlot()==0) {
+            Bukkit.broadcastMessage("Ability 1");
+            return;
+        }
+        if (event.getNewSlot()==1) {
+            Bukkit.broadcastMessage("Reload");
+            return;
+        }
         if (event.getNewSlot()<5){
-            event.setCancelled(true);
+            event.getPlayer().getInventory().setHeldItemSlot(5);
             Bukkit.broadcastMessage("Previous Item");
         } else if (event.getNewSlot()>5) {
-            event.setCancelled(true);
+            event.getPlayer().getInventory().setHeldItemSlot(5);
             Bukkit.broadcastMessage("Next Item");
         }
+    }
+
+    //Interact
+    @EventHandler
+    public void onPlayerSwapHandItemsEvent(PlayerSwapHandItemsEvent event) {
+        event.setCancelled(true);
+        Bukkit.broadcastMessage("Interact");
     }
 }
