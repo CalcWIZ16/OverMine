@@ -2,6 +2,7 @@ package net.dejavumc.overmine;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
 
 abstract public class Hero {
     public Player camera;
@@ -13,30 +14,54 @@ abstract public class Hero {
 
     public Hero(Player p) {
         this.camera = p;
+
+        p.setAllowFlight(true);
+        p.setFlying(true);
+
         perspective = Perspective.FIRST;
         location = p.getLocation().clone();
         mesh = new Mesh(location.clone());
     }
 
-    public void updateCameraPos() {
+    public Location updateCameraPos() {
         if (perspective == Perspective.FIRST) {
-            camera.teleport(mesh.getHeadPos());
+            return mesh.getHeadPos();
         }
+        return null;
     }
 
-    public void setPerspective(Perspective pers) {
-        if (pers == Perspective.FIRST) {
+    public void setPerspective(Perspective perspective) {
+        if (perspective == Perspective.FIRST) {
             mesh.unloadForCamera(camera);
-        } else if (pers == Perspective.THIRD) {
+        } else if (perspective == Perspective.THIRD) {
             mesh.loadForCamera(camera);
         }
         updateCameraPos();
     }
 
-    public void move(Location delta) {
-        location.add(delta);
+    public Location move(Location delta) {
+        double farthest = Math.max(Math.abs(delta.getX()), Math.abs(delta.getZ()));
+        double SPEED = 0.1;
+
+        Bukkit.broadcastMessage("DELTA YAW: " + delta.getYaw());
+
+        if (farthest != 0) {
+            delta.setX((delta.getX() / farthest) * SPEED);
+            delta.setZ((delta.getZ() / farthest) * SPEED);
+        }
+        delta.setY(0);
+
+        location = location.add(delta);
+
+        Bukkit.broadcastMessage("LOC YAW: " + location.getYaw());
+
         mesh.moveToLocation(location);
-        updateCameraPos();
+
+        return location;
+
+//        Location finalLoc = updateCameraPos();;
+//        Bukkit.broadcastMessage("FINAL YAW: " + finalLoc.getYaw());
+//        return finalLoc;
     }
 }
 

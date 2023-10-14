@@ -6,10 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,11 +38,22 @@ public final class OverMine extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        event.setCancelled(true);
-
         Location delta = event.getTo().subtract(event.getFrom());
         Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
-        hero.move(delta);
+        Location newLoc = hero.move(delta);
+
+        event.setTo(newLoc);
+
+        //ability 2
+        if (event.getPlayer().isSneaking() == true) {
+            event.getPlayer().setSneaking(false);
+            Bukkit.broadcastMessage("Ability 2");
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        herosHashMap.remove(event.getPlayer().getUniqueId());
     }
 
     //inputs
@@ -62,10 +71,14 @@ public final class OverMine extends JavaPlugin implements Listener {
         Bukkit.broadcastMessage("Ability 1");
     }
 
-    //ability 2
     @EventHandler
-    public void onPlayerToggleSneakEvent(PlayerToggleSneakEvent event) {
-        event.setCancelled(true);
-        Bukkit.broadcastMessage("Ability 2");
+    public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
+        if (event.getNewSlot()<5){
+            event.setCancelled(true);
+            Bukkit.broadcastMessage("Previous Item");
+        } else if (event.getNewSlot()>5) {
+            event.setCancelled(true);
+            Bukkit.broadcastMessage("Next Item");
+        }
     }
 }
