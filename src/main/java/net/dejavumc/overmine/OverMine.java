@@ -69,7 +69,8 @@ public final class OverMine extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
         event.setCancelled(true);
-        Bukkit.broadcastMessage("THE UNIVERSE IS SINGING TO ME");
+        Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
+        hero.ultimate();
     }
 
     //ability 1
@@ -79,29 +80,25 @@ public final class OverMine extends JavaPlugin implements Listener {
     public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
         if (event.getNewSlot()==0 || event.getNewSlot()==1) {
             if (event.getNewSlot()==0) {
-                Bukkit.broadcastMessage("Ability 1");
-            } else {
-                Bukkit.broadcastMessage("Reload");
                 Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
                 hero.ability1();
+            } else {
+                Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
+                hero.reload();
             }
             event.getPlayer().getInventory().setHeldItemSlot(5);
             return;
         }
-        if (event.getNewSlot()<5){
+        if (event.getNewSlot() != 5){
             event.getPlayer().getInventory().setHeldItemSlot(5);
-            Bukkit.broadcastMessage("Previous Item");
-        } else if (event.getNewSlot()>5) {
-            event.getPlayer().getInventory().setHeldItemSlot(5);
-            Bukkit.broadcastMessage("Next Item");
+            Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
+            hero.togglePrimaryFire();
         }
     }
 
     //ability 2
     @EventHandler
     public void onPlayerToggleSneakEvent(PlayerToggleSneakEvent event) {
-        Bukkit.broadcastMessage("Ability 2");
-
         Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
         hero.ability2();
     }

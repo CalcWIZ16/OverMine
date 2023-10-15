@@ -103,15 +103,11 @@ abstract public class Hero {
     }
 
     // ABILITIES
-    public void ability1() {
-        if (getPerspective() == Perspective.FIRST) {
-            setPerspective(Perspective.THIRD);
-        } else {
-            setPerspective(Perspective.FIRST);
-        }
-    }
-
+    public abstract void ability1();
     public abstract void ability2();
+    public abstract void ultimate();
+    public abstract void reload();
+    public abstract void togglePrimaryFire();
 }
 
 enum Perspective {

@@ -11,9 +11,16 @@ public class Soldier76 extends Hero {
 
     public Soldier76(Player p) {
         super(p);
+
+        mesh.loadMesh("soldier76.json");
+
         this.setSpeed(BASE_SPEED);
     }
 
+    @Override
+    public void ability1() {
+
+    }
 
     public boolean isSprinting = false;
     @Override
@@ -21,13 +28,25 @@ public class Soldier76 extends Hero {
         isSprinting = !isSprinting;
         if (isSprinting) {
             this.setSpeed(Math.min(BASE_SPEED * SPRINT_FACTOR, 1));
-            Bukkit.broadcastMessage("Sprinting");
         } else {
             this.setSpeed(BASE_SPEED);
-            Bukkit.broadcastMessage("Not Sprinting");
         }
     }
 
+    @Override
+    public void ultimate() {
+
+    }
+
+    @Override
+    public void reload() {
+
+    }
+
+    @Override
+    public void togglePrimaryFire() {
+
+    }
 
 
 }

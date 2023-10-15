@@ -28,13 +28,15 @@ public class Mesh {
                 render();
             }
         }, 0, 1);
-
-        // READ IN SOME JSON FILE TO CREATE THE MESH
     }
 
     private long lastWalkCycleInitiated = 0;
     private Location movementDelta;
     private boolean isWalking = false;
+
+    public void loadMesh(String json) {
+        // TODO READ IN SOME JSON FILE TO CREATE THE MESH
+    }
 
     public void render() {
         double maxMovement = Math.max(Math.abs(movementDelta.getX()), Math.abs(movementDelta.getZ()));
