@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
@@ -114,5 +115,11 @@ public final class OverMine extends JavaPlugin implements Listener {
     public void onPlayerSwapHandItemsEvent(PlayerSwapHandItemsEvent event) {
         event.setCancelled(true);
         Bukkit.broadcastMessage("Interact");
+    }
+
+    //Cancelling non-minewatch events
+    @EventHandler
+    public void onPlayerHungerChange(FoodLevelChangeEvent event) {
+        event.setCancelled(true);
     }
 }

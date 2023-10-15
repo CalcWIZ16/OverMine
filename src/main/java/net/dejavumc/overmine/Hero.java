@@ -17,6 +17,7 @@ abstract public class Hero {
 
     public Hero(Player p) {
         this.camera = p;
+        p.setFoodLevel(6);
 
         perspective = Perspective.FIRST;
         location = p.getLocation().clone();
