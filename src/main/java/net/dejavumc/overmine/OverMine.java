@@ -102,10 +102,8 @@ public final class OverMine extends JavaPlugin implements Listener {
     public void onPlayerToggleSneakEvent(PlayerToggleSneakEvent event) {
         Bukkit.broadcastMessage("Ability 2");
 
-        // FORCE CLIENT TO STOP SNEAKING
-        event.getPlayer().setAllowFlight(true);
-        event.getPlayer().setFlying(true);
-        event.getPlayer().setAllowFlight(false);
+        Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
+        hero.ability2();
     }
 
     //Interact

@@ -1,8 +1,10 @@
 package net.dejavumc.overmine;
 
+import net.dejavumc.overmine.mesh.Mesh;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.Bukkit;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 abstract public class Hero {
@@ -24,13 +26,15 @@ abstract public class Hero {
         mesh = new Mesh(location.clone());
 
         SPEED = 0.2f;
+
+        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 1, false, false));
     }
 
     // CAMERA/MOVEMENT
     public Location updateCameraPos() {
         Location loc = mesh.getHeadPos();
         if (perspective == Perspective.THIRD) {
-            double THIRD_PERSON_DISTANCE = 5;
+            double THIRD_PERSON_DISTANCE = 4;
             double yawRadians = toRadians(loc.getYaw());
             double xOffset = Math.sin(yawRadians) * -THIRD_PERSON_DISTANCE;
             double zOffset = Math.cos(yawRadians) * THIRD_PERSON_DISTANCE;
@@ -63,11 +67,11 @@ abstract public class Hero {
     }
 
     public Location move(Location from, Location to) {
-        if (getPerspective() != Perspective.FIRST) {
-            Location delta = to.subtract(from);
-            delta.setYaw(to.getYaw() - from.getYaw());
-            delta.setPitch(to.getPitch() - from.getPitch());
+        Location delta = to.clone().subtract(from);
+        delta.setYaw(to.getYaw() - from.getYaw());
+        delta.setPitch(to.getPitch() - from.getPitch());
 
+        if (getPerspective() != Perspective.FIRST) {
             double farthest = Math.max(Math.abs(delta.getX()), Math.abs(delta.getZ()));
             if (farthest != 0) {
                 delta.setX((delta.getX() / farthest) * SPEED);
@@ -82,7 +86,8 @@ abstract public class Hero {
             location = to;
         }
 
-        mesh.moveToLocation(location);
+        mesh.moveToLocation(location, delta);
+        mesh.render();
 
         if (getPerspective() != Perspective.FIRST) {
             return updateCameraPos();
@@ -94,7 +99,6 @@ abstract public class Hero {
 
     public void setSpeed(double speed) {
         camera.setWalkSpeed((float) speed);
-
         this.SPEED = speed;
     }
 
@@ -107,9 +111,7 @@ abstract public class Hero {
         }
     }
 
-    public void ability2() {
-        return;
-    }
+    public abstract void ability2();
 }
 
 enum Perspective {

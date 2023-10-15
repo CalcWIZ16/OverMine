@@ -6,10 +6,8 @@ import org.bukkit.entity.Player;
 
 public class Soldier76 extends Hero {
 
-    private double BASE_SPEED = 0.4;
-    private double SPRINT_FACTOR = 1.5;
-
-    public boolean isEnablingSprinting = true;
+    private double BASE_SPEED = 0.3;
+    private double SPRINT_FACTOR = 3;
 
     public Soldier76(Player p) {
         super(p);
@@ -17,15 +15,15 @@ public class Soldier76 extends Hero {
     }
 
 
+    public boolean isSprinting = false;
     @Override
     public void ability2() {
-        if (isEnablingSprinting) {
-            this.setSpeed(BASE_SPEED * SPRINT_FACTOR);
-            isEnablingSprinting = false;
+        isSprinting = !isSprinting;
+        if (isSprinting) {
+            this.setSpeed(Math.min(BASE_SPEED * SPRINT_FACTOR, 1));
             Bukkit.broadcastMessage("Sprinting");
         } else {
             this.setSpeed(BASE_SPEED);
-            isEnablingSprinting = true;
             Bukkit.broadcastMessage("Not Sprinting");
         }
     }
