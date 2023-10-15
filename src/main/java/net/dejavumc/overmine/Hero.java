@@ -93,6 +93,8 @@ abstract public class Hero {
     }
 
     public void setSpeed(double speed) {
+        camera.setWalkSpeed((float) speed);
+
         this.SPEED = speed;
     }
 

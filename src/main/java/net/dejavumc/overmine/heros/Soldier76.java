@@ -1,6 +1,7 @@
 package net.dejavumc.overmine.heros;
 
 import net.dejavumc.overmine.Hero;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class Soldier76 extends Hero {
@@ -21,9 +22,11 @@ public class Soldier76 extends Hero {
         if (isEnablingSprinting) {
             this.setSpeed(BASE_SPEED * SPRINT_FACTOR);
             isEnablingSprinting = false;
+            Bukkit.broadcastMessage("Sprinting");
         } else {
             this.setSpeed(BASE_SPEED);
             isEnablingSprinting = true;
+            Bukkit.broadcastMessage("Not Sprinting");
         }
     }
 
