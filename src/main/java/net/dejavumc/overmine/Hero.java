@@ -44,31 +44,42 @@ abstract public class Hero {
     }
 
     public void setPerspective(Perspective perspective) {
+        this.perspective = perspective;
         if (perspective == Perspective.FIRST) {
+            camera.setAllowFlight(false);
+            camera.setFlying(false);
             mesh.unloadForCamera(camera);
         } else if (perspective == Perspective.THIRD) {
+            camera.setAllowFlight(true);
+            camera.setFlying(true);
             mesh.loadForCamera(camera);
         }
-        updateCameraPos();
+        camera.teleport(mesh.getHeadPos());
     }
 
     public Perspective getPerspective() {
         return perspective;
     }
 
-    public Location move(Location delta) {
+    public Location move(Location from, Location to) {
         if (getPerspective() != Perspective.FIRST) {
+            Location delta = to.subtract(from);
+            delta.setYaw(to.getYaw() - from.getYaw());
+            delta.setPitch(to.getPitch() - from.getPitch());
+
             double farthest = Math.max(Math.abs(delta.getX()), Math.abs(delta.getZ()));
             if (farthest != 0) {
                 delta.setX((delta.getX() / farthest) * SPEED);
                 delta.setZ((delta.getZ() / farthest) * SPEED);
             }
             delta.setY(0);
-        }
 
-        location = location.add(delta);
-        location.setYaw(location.getYaw() + delta.getYaw());
-        location.setPitch(location.getPitch() + delta.getPitch());
+            location = location.add(delta);
+            location.setYaw(location.getYaw() + delta.getYaw());
+            location.setPitch(location.getPitch() + delta.getPitch());
+        } else {
+            location = to;
+        }
 
         mesh.moveToLocation(location);
 
@@ -93,7 +104,7 @@ abstract public class Hero {
         }
     }
 
-    public void ability2(boolean isEnabling) {
+    public void ability2() {
         return;
     }
 }

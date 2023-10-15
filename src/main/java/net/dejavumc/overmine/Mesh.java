@@ -25,9 +25,9 @@ public class Mesh {
     }
 
     public Location getHeadPos() {
-        // TODO find hero head position, for now return location + 1;
-        return location.clone().add(new Vector(0, 0, 0));
+        return location.clone();
     }
+
 
     public void moveToLocation(Location loc) {
         this.location = loc;

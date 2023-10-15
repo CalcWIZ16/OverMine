@@ -41,27 +41,21 @@ public final class OverMine extends JavaPlugin implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player p = event.getPlayer();
 
-        p.setAllowFlight(true);
-        p.setFlying(true);
         p.setSprinting(false);
-
-        Location delta = event.getTo().subtract(event.getFrom());
-
-        delta.setYaw(event.getTo().getYaw() - event.getFrom().getYaw());
-        delta.setPitch(event.getTo().getPitch() - event.getFrom().getPitch());
+        p.setSneaking(false);
 
         Hero hero = herosHashMap.get(event.getPlayer().getUniqueId());
-        Location newLoc = hero.move(delta);
+        Location newLoc = hero.move(event.getFrom(), event.getTo());
         if (newLoc != null) {
             event.setTo(newLoc);
         }
 
 
-        //ability 2
-        if (event.getPlayer().isSneaking() == true) {
-            event.getPlayer().setSneaking(false);
-            Bukkit.broadcastMessage("Ability 2");
-        }
+//        //ability 2
+//        if (event.getPlayer().isSneaking() == true) {
+//            event.getPlayer().setSneaking(false);
+//            Bukkit.broadcastMessage("Ability 2");
+//        }
     }
 
     @EventHandler
@@ -77,6 +71,8 @@ public final class OverMine extends JavaPlugin implements Listener {
         Bukkit.broadcastMessage("THE UNIVERSE IS SINGING TO ME");
     }
 
+    //ability 1
+    //reload
     //weapon scrolling
     @EventHandler
     public void onPlayerItemHeldEvent(PlayerItemHeldEvent event) {
@@ -98,6 +94,19 @@ public final class OverMine extends JavaPlugin implements Listener {
             event.getPlayer().getInventory().setHeldItemSlot(5);
             Bukkit.broadcastMessage("Next Item");
         }
+    }
+
+    private boolean sneaking;
+
+    //ability 2
+    @EventHandler
+    public void onPlayerToggleSneakEvent(PlayerToggleSneakEvent event) {
+        if (sneaking) {
+            sneaking = false;
+            return;
+        }
+        sneaking = true;
+        Bukkit.broadcastMessage("Ability 2");
     }
 
     //Interact
