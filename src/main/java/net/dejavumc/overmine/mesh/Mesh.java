@@ -2,19 +2,21 @@ package net.dejavumc.overmine.mesh;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Transformation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Mesh {
 
-    public ArrayList<MeshArmorStand> armorStands = new ArrayList<MeshArmorStand>();
+    public HashMap<String, MeshDisplayEntity> meshEntities = new HashMap<String, MeshDisplayEntity>();
     private final long walkCycleDuration = 1000;
 
     private Location location;
-    private BukkitTask renderTask;
+    private final BukkitTask renderTask;
 
     public Mesh(Location location) {
         this.location = location;
@@ -26,6 +28,8 @@ public class Mesh {
                 render();
             }
         }, 0, 1);
+
+        // READ IN SOME JSON FILE TO CREATE THE MESH
     }
 
     private long lastWalkCycleInitiated = 0;
@@ -53,9 +57,7 @@ public class Mesh {
 
         Bukkit.broadcastMessage("progressThroughWalkCycle: " + progressThroughWalkCycle);
 
-        for (MeshArmorStand armorStand : armorStands) {
-            armorStand.armorStand.teleport(location.clone().add(armorStand.offsetFromCenter));
-        }
+
     }
 
     public void loadForCamera(Player p) {
