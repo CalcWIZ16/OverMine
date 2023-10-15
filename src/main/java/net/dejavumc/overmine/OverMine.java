@@ -97,17 +97,15 @@ public final class OverMine extends JavaPlugin implements Listener {
         }
     }
 
-    private boolean sneaking;
-
     //ability 2
     @EventHandler
     public void onPlayerToggleSneakEvent(PlayerToggleSneakEvent event) {
-        if (sneaking) {
-            sneaking = false;
-            return;
-        }
-        sneaking = true;
         Bukkit.broadcastMessage("Ability 2");
+
+        // FORCE CLIENT TO STOP SNEAKING
+        event.getPlayer().setAllowFlight(true);
+        event.getPlayer().setFlying(true);
+        event.getPlayer().setAllowFlight(false);
     }
 
     //Interact
